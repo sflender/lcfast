@@ -1,0 +1,3 @@
+lcfast - a fast code for generating lightcones (S. Flender 2017)
+
+The code loops over a list of snapshots and cuts out a shell from each snapshot, corresponding to the redshift range covered by it.
