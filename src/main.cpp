@@ -55,6 +55,9 @@ int main(int argc, char** argv){
 	float *lc_x = new float[N_lc_est];
 	float *lc_y = new float[N_lc_est];
 	float *lc_z = new float[N_lc_est];
+	float *lc_vx = new float[N_lc_est];
+	float *lc_vy = new float[N_lc_est];
+	float *lc_vz = new float[N_lc_est];
 	float *lc_mass = new float[N_lc_est];
 	float *lc_redshift = new float[N_lc_est];
 
@@ -71,10 +74,13 @@ int main(int argc, char** argv){
  		float dmax = comput_comov_dist(snapshot_to_redshift(snapshot[i-1]), Omega_M);
 		if(my_rank==0) cout<<"   ...dmin,dmax = "<<dmin<<", "<<dmax<<" Mpc/h\n";
 
- 		float *x, *y, *z, *mass;
+ 		float *x, *y, *z, *vx, *vy, *vz, *mass;
  		dtk::read_gio_quick(filename, "sod_halo_min_pot_x", x, N_halos);
   		dtk::read_gio_quick(filename, "sod_halo_min_pot_y", y, N_halos);
    		dtk::read_gio_quick(filename, "sod_halo_min_pot_z", z, N_halos);
+ 		dtk::read_gio_quick(filename, "sod_halo_mean_vx", vx, N_halos);
+  		dtk::read_gio_quick(filename, "sod_halo_mean_vy", vy, N_halos);
+   		dtk::read_gio_quick(filename, "sod_halo_mean_vz", vz, N_halos);
       	dtk::read_gio_quick(filename, "sod_halo_mass", mass , N_halos);
 
 		int maxrep = ceil(dmax/Lbox); 
@@ -92,6 +98,9 @@ int main(int argc, char** argv){
 	 						lc_y[lc_count_tot] = y[h]+j*Lbox;
 	 						lc_z[lc_count_tot] = z[h]+k*Lbox;
 	 						lc_mass[lc_count_tot] = mass[h];
+	 						lc_vx[lc_count_tot] = vx[h];
+	 						lc_vy[lc_count_tot] = vy[h];
+	 						lc_vz[lc_count_tot] = vz[h];
 	 						lc_count++;
 	 						lc_count_tot++;
 	 						if(lc_count_tot>N_lc_est){
@@ -154,6 +163,9 @@ int main(int argc, char** argv){
   	gio.addVariable("x",lc_x,gio::GenericIO::VarIsPhysCoordX);
   	gio.addVariable("y",lc_y,gio::GenericIO::VarIsPhysCoordY);
   	gio.addVariable("z",lc_z,gio::GenericIO::VarIsPhysCoordZ);
+    gio.addVariable("vx",lc_vx);
+  	gio.addVariable("vy",lc_vy);
+  	gio.addVariable("vz",lc_vz);
   	gio.addVariable("M200red",lc_mass);
   	gio.addVariable("redshift",lc_redshift);
 	gio.write();
